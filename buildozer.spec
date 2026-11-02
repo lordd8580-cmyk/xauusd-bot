@@ -24,9 +24,10 @@ requirements = \
 orientation     = portrait
 fullscreen      = 0
 
-android.minapi  = 26
-android.sdk     = 34
-android.ndk     = 25b
+android.minapi  = 21
+android.sdk     = 33
+android.ndk     = 23b
+android.ndk_api = 21
 android.archs   = arm64-v8a
 android.accept_sdk_license = True
 android.allow_backup        = False
@@ -35,10 +36,7 @@ android.permissions = \
     INTERNET,\
     VIBRATE,\
     WAKE_LOCK,\
-    FOREGROUND_SERVICE,\
     POST_NOTIFICATIONS
-
-p4a.branch = develop
 
 [buildozer]
 log_level    = 2
