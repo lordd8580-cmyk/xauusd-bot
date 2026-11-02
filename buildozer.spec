@@ -24,10 +24,10 @@ requirements = \
 orientation     = portrait
 fullscreen      = 0
 
-android.minapi  = 21
+android.minapi  = 26
+android.ndk_api = 26
 android.sdk     = 33
-android.ndk     = 23b
-android.ndk_api = 21
+android.ndk     = 25b
 android.archs   = arm64-v8a
 android.accept_sdk_license = True
 android.allow_backup        = False
