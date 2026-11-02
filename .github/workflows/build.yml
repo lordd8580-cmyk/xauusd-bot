@@ -28,22 +28,15 @@ jobs:
             build-essential zlib1g-dev \
             autoconf libtool pkg-config \
             cmake ccache openjdk-17-jdk
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
           pip install --upgrade pip
-          pip install buildozer cython==0.29.37
-
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.buildozer
-            ~/.gradle
-          key: build-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          pip install buildozer==1.5.0 cython==0.29.37 \
+            python-for-android==2023.9.16
 
       - name: Build APK
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
           yes | buildozer -v android debug 2>&1 | tee build.log
-          echo "--- BIN ---"
           ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
 
       - name: Upload APK
