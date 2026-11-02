@@ -3,76 +3,49 @@ name: Build XAU/USD Bot APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:   # ← əl ilə də başlatmaq olur
+  workflow_dispatch:
 
 jobs:
   build-apk:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     timeout-minutes: 60
 
     steps:
-      # ── Kodu çək
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Java qur
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # ── Python qur
-      - name: Set up Python 3.10
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # ── Sistem asılılıqları
-      - name: Install system deps
+      - name: Install deps
         run: |
           sudo apt update -qq
-          sudo apt install -y -qq \
+          sudo apt install -y \
             zip unzip git \
-            libffi-dev libssl-dev build-essential \
-            zlib1g-dev autoconf libtool \
-            pkg-config cmake ccache
-
-      # ── Buildozer + Cython
-      - name: Install buildozer
-        run: |
+            libffi-dev libssl-dev \
+            build-essential zlib1g-dev \
+            autoconf libtool pkg-config \
+            cmake ccache openjdk-17-jdk
           pip install --upgrade pip
-          pip install buildozer cython==0.29.37
+          pip install buildozer==1.5.0 cython==0.29.37
 
-      # ── Cache (sonrakı build-ləri sürətləndirir)
-      - name: Cache buildozer global dir
-        uses: actions/cache@v4
-        with:
-          path: ~/.buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-          restore-keys: buildozer-${{ runner.os }}-
-
-      - name: Cache .buildozer local
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: local-buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
-
-      # ── APK BUILD
       - name: Build APK
         run: |
-          buildozer android debug 2>&1 | tee build.log
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          yes | buildozer -v android debug 2>&1 | tee build.log
+          ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
 
-      # ── APK-nı artifact kimi yüklə
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: xauusd-bot-apk
           path: bin/*.apk
+          if-no-files-found: warn
           retention-days: 30
 
-      # ── Build logu (xəta varsa bax)
-      - name: Upload build log
+      - name: Upload log
         if: always()
         uses: actions/upload-artifact@v4
         with:
