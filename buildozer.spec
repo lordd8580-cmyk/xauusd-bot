@@ -8,7 +8,7 @@ version         = 1.0.0
 
 requirements = \
     python3,\
-    kivy==2.3.0,\
+    kivy==2.2.1,\
     yfinance,\
     pandas,\
     numpy,\
@@ -19,7 +19,6 @@ requirements = \
     charset-normalizer,\
     multitasking,\
     frozendict,\
-    lxml,\
     pillow
 
 orientation     = portrait
@@ -38,6 +37,8 @@ android.permissions = \
     WAKE_LOCK,\
     FOREGROUND_SERVICE,\
     POST_NOTIFICATIONS
+
+p4a.branch = develop
 
 [buildozer]
 log_level    = 2
