@@ -1,12 +1,21 @@
-      - name: Install buildozer
-        run: |
-          sudo apt update -qq
-          sudo apt install -y \
-            zip unzip git \
-            libffi-dev libssl-dev \
-            build-essential zlib1g-dev \
-            autoconf libtool pkg-config \
-            cmake ccache openjdk-17-jdk \
-            gettext
-          pip install --upgrade pip
-          pip install buildozer==1.5.0 cython==0.29.37
+[app]
+title = XAU/USD Bot
+package.name = xauusdbot
+package.domain = org.olivia
+source.dir = .
+source.include_exts = py,png,jpg,kv,atlas,txt
+version = 1.0.0
+requirements = python3,kivy==2.2.1,yfinance,pandas,numpy,plyer,requests,certifi,urllib3,charset-normalizer,multitasking,frozendict,pillow
+orientation = portrait
+fullscreen = 0
+android.minapi = 26
+android.ndk_api = 26
+android.ndk = 25b
+android.archs = arm64-v8a
+android.accept_sdk_license = True
+android.allow_backup = False
+android.permissions = INTERNET,VIBRATE,WAKE_LOCK,POST_NOTIFICATIONS
+
+[buildozer]
+log_level = 2
+warn_on_root = 1
