@@ -14,8 +14,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        env:
+          SKIP_JDK_VERSION_CHECK: true
 
       - name: Install Android build tools
         run: |
@@ -34,7 +42,7 @@ jobs:
             libffi-dev libssl-dev \
             build-essential zlib1g-dev \
             autoconf libtool pkg-config \
-            cmake ccache openjdk-17-jdk \
+            cmake ccache \
             gettext autopoint
 
       - name: Install buildozer
@@ -44,7 +52,7 @@ jobs:
 
       - name: Build APK
         run: |
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export JAVA_HOME=$JAVA_HOME_17_X64
           export ANDROIDSDK=$ANDROID_SDK_ROOT
           yes | buildozer -v android debug 2>&1 | tee build.log
           ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
