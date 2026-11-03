@@ -1,43 +1,62 @@
-[app]
-title           = XAU/USD Bot
-package.name    = xauusdbot
-package.domain  = org.olivia
-source.dir      = .
-source.include_exts = py,png,jpg,kv,atlas,txt
-version         = 1.0.0
+name: Build XAU/USD Bot APK
 
-requirements = \
-    python3,\
-    kivy==2.2.1,\
-    yfinance,\
-    pandas,\
-    numpy,\
-    plyer,\
-    requests,\
-    certifi,\
-    urllib3,\
-    charset-normalizer,\
-    multitasking,\
-    frozendict,\
-    pillow
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-orientation     = portrait
-fullscreen      = 0
+jobs:
+  build-apk:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
 
-android.minapi  = 26
-android.ndk_api = 26
-android.sdk     = 33
-android.ndk     = 25b
-android.archs   = arm64-v8a
-android.accept_sdk_license = True
-android.allow_backup        = False
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-android.permissions = \
-    INTERNET,\
-    VIBRATE,\
-    WAKE_LOCK,\
-    POST_NOTIFICATIONS
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-[buildozer]
-log_level    = 2
-warn_on_root = 1
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: |
+          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
+
+      - name: Install buildozer
+        run: |
+          sudo apt update -qq
+          sudo apt install -y \
+            zip unzip git \
+            libffi-dev libssl-dev \
+            build-essential zlib1g-dev \
+            autoconf libtool pkg-config \
+            cmake ccache openjdk-17-jdk
+          pip install --upgrade pip
+          pip install buildozer==1.5.0 cython==0.29.37
+
+      - name: Build APK
+        run: |
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export ANDROIDSDK=$ANDROID_SDK_ROOT
+          yes | buildozer -v android debug 2>&1 | tee build.log
+          ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: xauusd-bot-apk
+          path: bin/*.apk
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          retention-days: 7
