@@ -5,7 +5,7 @@ package.domain = org.olivia
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,txt
 version = 1.0.0
-requirements = python3,kivy==2.2.1,numpy,pandas,yfinance==0.2.18,plyer,requests,certifi,urllib3,charset-normalizer,multitasking,pillow
+requirements = python3,kivy==2.2.1,requests,certifi,urllib3,charset-normalizer,plyer,pillow
 orientation = portrait
 fullscreen = 0
 android.minapi = 26
