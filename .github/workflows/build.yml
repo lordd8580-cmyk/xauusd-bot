@@ -14,12 +14,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: |
+          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install deps
+      - name: Install system deps
         run: |
           sudo apt update -qq
           sudo apt install -y \
@@ -27,15 +34,18 @@ jobs:
             libffi-dev libssl-dev \
             build-essential zlib1g-dev \
             autoconf libtool pkg-config \
-            cmake ccache openjdk-17-jdk
-          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            cmake ccache openjdk-17-jdk \
+            gettext autopoint
+
+      - name: Install buildozer
+        run: |
           pip install --upgrade pip
-          pip install buildozer==1.5.0 cython==0.29.37 \
-            python-for-android==2023.9.16
+          pip install buildozer==1.5.0 cython==0.29.37
 
       - name: Build APK
         run: |
           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+          export ANDROIDSDK=$ANDROID_SDK_ROOT
           yes | buildozer -v android debug 2>&1 | tee build.log
           ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
 
