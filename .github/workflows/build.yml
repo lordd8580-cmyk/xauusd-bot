@@ -20,21 +20,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        env:
-          SKIP_JDK_VERSION_CHECK: true
-
-      - name: Install Android build tools
-        run: |
-          sdkmanager "build-tools;33.0.2" "platforms;android-33" "platform-tools"
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install system deps
+      - name: Install all deps
         run: |
           sudo apt update -qq
           sudo apt install -y \
@@ -44,16 +35,12 @@ jobs:
             autoconf libtool pkg-config \
             cmake ccache \
             gettext autopoint
-
-      - name: Install buildozer
-        run: |
           pip install --upgrade pip
           pip install buildozer==1.5.0 cython==0.29.37
 
       - name: Build APK
         run: |
           export JAVA_HOME=$JAVA_HOME_17_X64
-          export ANDROIDSDK=$ANDROID_SDK_ROOT
           yes | buildozer -v android debug 2>&1 | tee build.log
           ls -la bin/ 2>/dev/null || echo "bin/ yoxdur"
 
